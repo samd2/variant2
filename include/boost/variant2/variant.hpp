@@ -1792,28 +1792,11 @@ void swap( variant<T...> & v, variant<T...> & w )
 namespace detail
 {
 
-template<class V> struct hash_value_L
+struct hash_value_L
 {
-    V const & v;
-
-    template<class I> std::size_t operator()( I ) const
+    template<class T> std::size_t operator()( T const & t ) const
     {
-        boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
-        boost::ulong_long_type const prime = ( boost::ulong_long_type( 0x00000100 ) << 32 ) + 0x000001B3;
-
-        // index
-
-        hv ^= I::value;
-        hv *= prime;
-
-        // value
-
-        auto const & t = unsafe_get<I::value>( v );
-
-        hv ^= std::hash<remove_cv_ref_t<decltype(t)>>()( t );
-        hv *= prime;
-
-        return static_cast<std::size_t>( hv );
+        return std::hash<T>()( t );
     }
 };
 
@@ -1826,7 +1809,22 @@ inline std::size_t hash_value( monostate const & )
 
 template<class... T> std::size_t hash_value( variant<T...> const & v )
 {
-    return mp11::mp_with_index<sizeof...(T)>( v.index(), detail::hash_value_L< variant<T...> >{ v } );
+    std::size_t w = visit( detail::hash_value_L{}, v );
+
+    boost::ulong_long_type hv = ( boost::ulong_long_type( 0xCBF29CE4 ) << 32 ) + 0x84222325;
+    boost::ulong_long_type const prime = ( boost::ulong_long_type( 0x00000100 ) << 32 ) + 0x000001B3;
+
+    // index
+
+    hv ^= v.index();
+    hv *= prime;
+
+    // value
+
+    hv ^= w;
+    hv *= prime;
+
+    return static_cast<std::size_t>( hv );
 }
 
 namespace detail
