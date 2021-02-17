@@ -388,6 +388,7 @@ jobs:
           CMAKE_SUBDIR_TEST: ${{ matrix.cmake_subdir_test }}
           CMAKE_INSTALL_TEST: ${{ matrix.cmake_install_test }}
           TRAVIS_BRANCH: ${{ github.base_ref }}
+          TRAVIS_OS_NAME: "linux"
         run: |
           echo '==================================> SETUP'
           BOOST_CI_ORG=boostorg BOOST_CI_BRANCH=master && wget https://github.com/$BOOST_CI_ORG/boost-ci/archive/$BOOST_CI_BRANCH.tar.gz && tar -xvf $BOOST_CI_BRANCH.tar.gz && mkdir -p .github &&  mv boost-ci-$BOOST_CI_BRANCH .github/boost-ci
@@ -601,6 +602,7 @@ jobs:
           CMAKE_SUBDIR_TEST: ${{ matrix.cmake_subdir_test }}
           CMAKE_INSTALL_TEST: ${{ matrix.cmake_install_test }}
           TRAVIS_BRANCH: ${{ github.base_ref }}
+          TRAVIS_OS_NAME: "osx"
         run: |
           echo '==================================> SETUP'
           set -ex
